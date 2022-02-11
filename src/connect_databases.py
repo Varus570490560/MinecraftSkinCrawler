@@ -32,3 +32,16 @@ def insert_into_mc_skin_from_mc_net(db, skin_lst):
                 print('database saved!')
         except pymysql.Error as err:
             print(err)
+
+
+def insert_into_mc_skin_from_mc_com(db, skin_lst):
+    with db.cursor() as cursor:
+        try:
+            for skin in skin_lst:
+                cursor.execute(
+                    'INSERT INTO `skin` (`id`,`skin_url`,`skin_preview`,`author`,`name`,`visit`,`download`,`praise`,`comment`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)',
+                    skin)
+                print(skin)
+                print('database saved!')
+        except pymysql.Error as err:
+            print(err)

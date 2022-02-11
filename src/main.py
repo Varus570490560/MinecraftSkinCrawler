@@ -1,3 +1,3 @@
-import craw_at_mc_net
+import craw
 if __name__ == '__main__':
-    craw_at_mc_net.craw_at_mc_net()
+    craw.craw_at_mc_com()

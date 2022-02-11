@@ -1,3 +1,3 @@
-import connect_databases
+import craw_at_mc_net
 if __name__ == '__main__':
-    connect_databases.open_database_mc_skin()
+    craw_at_mc_net.craw_at_mc_net()

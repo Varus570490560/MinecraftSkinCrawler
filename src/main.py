@@ -1,2 +1,3 @@
+import connect_databases
 if __name__ == '__main__':
-    pass
+    connect_databases.open_database_mc_skin()

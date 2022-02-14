@@ -35,7 +35,7 @@ def analysis_at_minecraft_skins_com(response):
     base_url = 'https://www.minecraftskins.com'
     soup = BeautifulSoup(response.content, 'lxml')
     skins = soup.findAll(name='div', attrs="skin")
-    for skin in skins:
+    for j, skin in skins:
         skin_name = ""
         skin_page = ""
         skin_preview_url = ""
@@ -65,4 +65,5 @@ def analysis_at_minecraft_skins_com(response):
             skin_id = -skin_id
         res_lst.append((skin_id, skin_download_url, skin_preview_url, skin_author, skin_name, skin_visit, skin_download,
                         skin_praise, skin_comment))
+        print("analysis progress:", j, "/", len(skins))
     return res_lst

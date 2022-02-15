@@ -53,3 +53,58 @@ def delete_from_skin_where_skin_url_begin_with_com(db):
             cursor.execute("DELETE FROM `skin` WHERE `skin_url` LIKE 'https://www.minecraftskins.com/%'")
         except pymysql.Error as err:
             print(err)
+
+
+def insert_into_mc_skin_from_mskin(db, skin_lst):
+    with db.cursor() as cursor:
+        for skin in skin_lst:
+            try:
+                cursor.execute(
+                    'INSERT INTO `skin` (`id`,`skin_url`,`skin_preview`,`name`,`like`,`visit`,`download`) VALUES (%s,%s,%s,%s,%s,%s,%s)',
+                    skin)
+                print(skin)
+                print('database saved!')
+            except pymysql.Error as err:
+                print(err)
+
+
+def open_database_mark():
+    try:
+        db = pymysql.connect(host='localhost', user='root', password='', port=3306, database='mark', autocommit=True)
+        print('database "mark" open successfully!!!')
+    except pymysql.Error as e:
+        print('database "mark" open failed!!!')
+        print(e)
+        return None
+    return db
+
+
+def reset_table_mcskin_mark(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute('DELETE FROM `mskin_mark`')
+            i = 1
+            while i < 2223:
+                cursor.execute('INSERT INTO `mskin_mark` (`page`,`mark`) VALUES (%s,0)', (i,))
+                i = i + 1
+        except pymysql.Error as err:
+            print(err)
+
+
+def select_mskin_mark(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute('SELECT `page` FROM `mskin_mark` WHERE `mark` = 0')
+            res = cursor.fetchall()
+        except pymysql.Error as err:
+            print(err)
+            return None
+    return res
+
+
+def update_set_mark(db, page):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute('UPDATE `mskin_mark` SET `mark` = 1 WHERE `page` = %s', (page,))
+        except pymysql.Error as err:
+            print(err)

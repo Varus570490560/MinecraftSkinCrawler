@@ -52,4 +52,5 @@ def craw_at_mskin(thread_count):
     slip_page = slip(pages, thread_count)
     i = 0
     for page in slip_page:
+        i = i + 1
         CrawlingMskinThread(i, page).start()

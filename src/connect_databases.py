@@ -20,15 +20,12 @@ def close_database(db):
 def insert_into_mc_skin_from_mc_net(db, skin_lst):
     with db.cursor() as cursor:
         for skin in skin_lst:
-            skin_id = hash(skin[4])
-            if skin_id < 0:
-                skin_id = -skin_id
             author = skin[3].replace("Designed by ", "")
             try:
                 cursor.execute(
-                    'INSERT INTO `skin` (`id`,`skin_url`,`skin_preview`,`author`,`name`,`description`) VALUES (%s,%s,%s,%s,%s,%s)',
-                    (skin_id, skin[1], skin[2], author, skin[0], skin[4]))
-                print((skin_id, skin[1], skin[2], author, skin[0], skin[4]))
+                    'INSERT INTO `skin` (`download_url`,`preview_url_1`,`author`,`name`,`description`) VALUES (%s,%s,%s,%s,%s)',
+                    (skin[1], skin[2], author, skin[0], skin[4]))
+                print((skin[1], skin[2], author, skin[0], skin[4]))
                 print('database saved!')
             except pymysql.Error as err:
                 print(err)
@@ -39,7 +36,7 @@ def insert_into_mc_skin_from_mc_com(db, skin_lst):
         for skin in skin_lst:
             try:
                 cursor.execute(
-                    'INSERT INTO `skin` (`id`,`skin_url`,`skin_preview`,`author`,`name`,`visit`,`download`,`praise`,`comment`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)',
+                    'INSERT INTO `skin` (`download_url`,`preview_url_1`,`author`,`name`,`visit`,`download`,`praise`,`comment`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)',
                     skin)
                 print(skin)
                 print('database saved!')
@@ -60,7 +57,7 @@ def insert_into_mc_skin_from_mskin(db, skin_lst):
         for skin in skin_lst:
             try:
                 cursor.execute(
-                    'INSERT INTO `skin` (`id`,`skin_url`,`skin_preview`,`name`,`like`,`visit`,`download`) VALUES (%s,%s,%s,%s,%s,%s,%s)',
+                    'INSERT INTO `skin` (`download_url`,`preview_url_1`,`name`,`like`,`visit`,`download`) VALUES (%s,%s,%s,%s,%s,%s)',
                     skin)
                 print(skin)
                 print('database saved!')
@@ -108,3 +105,16 @@ def update_set_mark(db, page):
             cursor.execute('UPDATE `mskin_mark` SET `mark` = 1 WHERE `page` = %s', (page,))
         except pymysql.Error as err:
             print(err)
+
+
+def insert_into_mc_skin_from_name_mc(db, skin_lst):
+    with db.cursor() as cursor:
+        for skin in skin_lst:
+            try:
+                cursor.execute(
+                    'INSERT INTO `skin` (`download_url`,`preview_url_1`,`preview_url_2`,`like`) VALUES (%s,%s,%s,%s)',
+                    skin)
+                print(skin)
+                print('database saved!')
+            except pymysql.Error as err:
+                print(err)

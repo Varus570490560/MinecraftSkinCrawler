@@ -62,12 +62,9 @@ def analysis_at_minecraft_skins_com(response):
         skin_visit = skin_soup.find(name='div', attrs='sid-views').string
         skin_download = skin_soup.find(attrs={'data-role': "skin-total-amount-of-downloads"}).string.replace('\n', '')
         skin_download_url = base_url + skin_soup.find(name='a', attrs='btn btn-download')['href']
-        skin_id = hash(skin_download_url)
-        if skin_id < 0:
-            skin_id = -skin_id
-        res_lst.append((skin_id, skin_download_url, skin_preview_url, skin_author, skin_name, skin_visit, skin_download,
+        res_lst.append((skin_download_url, skin_preview_url, skin_author, skin_name, skin_visit, skin_download,
                         skin_praise, skin_comment))
-        print((skin_id, skin_download_url, skin_preview_url, skin_author, skin_name, skin_visit, skin_download,
+        print((skin_download_url, skin_preview_url, skin_author, skin_name, skin_visit, skin_download,
                skin_praise, skin_comment))
         print("analysis progress:", j, "/", len(skins))
     return res_lst
@@ -107,9 +104,36 @@ def analysis_at_mskin(response):
                         skin_like = page_child.contents[2].string
                 download = page_soup.find(name='a', attrs='dw starting_download btn waves-effect waves-light cyan')
                 skin_download_url = download['href']
-        skin_id = hash(skin_download_url)
-        if skin_id < 0:
-            skin_id = -skin_id
-        res.append((str(skin_id), skin_download_url, skin_preview_url, skin_name, skin_like, skin_visit, skin_download))
-        print((str(skin_id), skin_download_url, skin_preview_url, skin_name, skin_like, skin_visit, skin_download))
+        res.append((skin_download_url, skin_preview_url, skin_name, skin_like, skin_visit, skin_download))
+        print((skin_download_url, skin_preview_url, skin_name, skin_like, skin_visit, skin_download))
     return res
+
+
+def find_id(url):
+    print(url)
+    url = url.replace('/skin/', '')
+    end_index = url.find('&')
+    return url[0: end_index+1]
+
+
+def analysis_name_mc_soup(soup):
+    skin_lst = list()
+    skins = soup.findAll(name='div', attrs='card mb-2')
+    for skin in skins:
+        skin_id = ""
+        skin_download_url = ""
+        skin_preview_url = ""
+        skin_preview_url_2 = ""
+        skin_like = ""
+        for i, child in enumerate(skin.descendants):
+            if i == 0:
+                skin_id =child['href']
+                skin_id = skin_id.replace('/skin/','')
+                print(skin_id)
+            if i == 10:
+                skin_like = child.string[1:len(child.string)]
+        skin_preview_url = 'https://r.nmc1.net/skin/body.png?id=' + skin_id + '&model=slim&theta=-23&phi=8&time=289.25&width=600&height=800'
+        skin_preview_url_2 = 'https://r.nmc1.net/skin/body.png?id=' + skin_id + '&model=slim&theta=151&phi=9&time=1366.06&width=600&height=800'
+        skin_download_url = 'https://i.nmc1.net/' + skin_id + '.png'
+        skin_lst.append((skin_download_url, skin_preview_url, skin_preview_url_2, skin_like))
+    return skin_lst

@@ -17,7 +17,7 @@ def craw_at_mc_net():
 
 def craw_at_mc_com():
     db = connect_databases.open_database_mc_skin()
-    page = 36
+    page = 1
     while page < 50:
         headers = {
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36 '
@@ -27,6 +27,8 @@ def craw_at_mc_com():
         connect_databases.insert_into_mc_skin_from_mc_com(db=db, skin_lst=skin_list)
         page += 1
     connect_databases.close_database(db=db)
+
+
 
 
 

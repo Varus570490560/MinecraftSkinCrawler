@@ -132,3 +132,44 @@ def insert_into_mc_skin_from_nova(db, skin_lst):
                 print('database saved!')
             except pymysql.Error as err:
                 print(err)
+
+
+def select_id_preview_url_1_need_be_modify(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute(
+                "SELECT `id` FROM `skin` WHERE `preview_url_1` LIKE 'https://r.nmc1.net%'")
+            res = cursor.fetchall()
+        except pymysql.Error as err:
+            print(err)
+            return None
+    return res
+
+
+def update_set_preview_url_1_by_id(db, id, url):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute('UPDATE `skin` SET `preview_url_1` = %s WHERE `id` = %s', (url, id))
+        except pymysql.Error as err:
+            print(err)
+
+
+def update_set_data_source(db,id,data_source):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute('UPDATE `skin` SET `data_source` = %s WHERE `id` = %s', (data_source, id))
+        except pymysql.Error as err:
+            print(err)
+
+
+def select_from_skin_where_data_source_is_mskin_order_by_download_desc_limit_500(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute(
+                "select *from skin where data_source ='mskin' order by download desc limit 500")
+            res = cursor.fetchall()
+        except pymysql.Error as err:
+            print(err)
+            return None
+    return res
+

@@ -163,3 +163,48 @@ def analysis_at_nova(response_str):
         print(e)
     return page, lst
 
+
+def analysis_mc_skin_top_page(response):
+    lst = list()
+    base_url = 'https://mcskins.top'
+    name = ""
+    author = ""
+    preview_url_1 = ""
+    download_url = ""
+    like = ""
+    comment = ""
+    soup = BeautifulSoup(response.content, 'lxml')
+    skins = soup.findAll(name='div', attrs='skin')
+    for skin in skins:
+        for i, child in enumerate(skin.descendants):
+            if i == 2:
+                skin_url = base_url + child['href']
+                file_url = child['href'].replace('/skin/', '/')
+                download_url = base_url + file_url
+                analysis_mc_skin_top_skin(skin_url)
+            if i == 3:
+                name = child.string
+            if i == 1:
+                preview_url_1 = base_url + '/assets/images/skin' + child['src'] + '.png'
+        lst.append((name, author, download_url, preview_url_1, like, comment))
+        print((name, author, download_url, preview_url_1, like, comment))
+    return lst
+
+
+def analysis_mc_skin_top_skin(skin_url):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36'
+    }
+    response = requests.get(url=skin_url, headers=headers)
+    soup = BeautifulSoup(response.content, 'lxml')
+    like = soup.find(name='div', id='like')
+    comment = soup.find(name='commentsCount')
+    if like is None:
+        like = '0'
+    else:
+        like=like.string
+    if comment is None:
+        comment = '0'
+    else:
+        comment=comment.string
+    return like, comment

@@ -49,3 +49,16 @@ def craw_at_nova():
         connect_databases.insert_into_mc_skin_from_nova(db=db, skin_lst=skins)
     print('OK')
     connect_databases.close_database(db)
+
+
+def craw_at_mc_skin_top():
+    db = connect_databases.open_database_mc_skin()
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36 '
+    }
+    page = 1
+    response = requests.get(url='https://mcskins.top/page/'+ str(page), headers=headers)
+    lst = analy.analysis_mc_skin_top_page(response=response)
+    print(lst)
+
+

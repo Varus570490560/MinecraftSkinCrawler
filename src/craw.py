@@ -1,7 +1,8 @@
+import json
+
 import requests
 import analy
 import connect_databases
-import asyncio
 
 
 def craw_at_mc_net():
@@ -29,7 +30,22 @@ def craw_at_mc_com():
     connect_databases.close_database(db=db)
 
 
-
-
-
-
+def craw_at_nova():
+    db = connect_databases.open_database_mc_skin()
+    page = 'CjoKFAoHaG90bmVzcxIJIRgmUwXjt5JAEh5qDHN-c2tpbmVkaXRvcnIOCxIEU2tpbhjC5YuIBgwYACAB'
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36 '
+    }
+    while page != "":
+        param = {
+            'json': 'true',
+            'callback': 'searchData',
+            'next': page
+        }
+        print('page code:', page)
+        response = requests.get(url='https://minecraft.novaskin.me/gallery/tag/skins', headers=headers, params=param)
+        response_str = response.content.decode('utf8')
+        page, skins = analy.analysis_at_nova(response_str)
+        connect_databases.insert_into_mc_skin_from_nova(db=db, skin_lst=skins)
+    print('OK')
+    connect_databases.close_database(db)

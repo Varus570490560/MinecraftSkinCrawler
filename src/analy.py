@@ -1,3 +1,5 @@
+import json
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -113,7 +115,7 @@ def find_id(url):
     print(url)
     url = url.replace('/skin/', '')
     end_index = url.find('&')
-    return url[0: end_index+1]
+    return url[0: end_index + 1]
 
 
 def analysis_name_mc_soup(soup):
@@ -127,8 +129,8 @@ def analysis_name_mc_soup(soup):
         skin_like = ""
         for i, child in enumerate(skin.descendants):
             if i == 0:
-                skin_id =child['href']
-                skin_id = skin_id.replace('/skin/','')
+                skin_id = child['href']
+                skin_id = skin_id.replace('/skin/', '')
                 print(skin_id)
             if i == 10:
                 skin_like = child.string[1:len(child.string)]
@@ -137,3 +139,27 @@ def analysis_name_mc_soup(soup):
         skin_download_url = 'https://i.nmc1.net/' + skin_id + '.png'
         skin_lst.append((skin_download_url, skin_preview_url, skin_preview_url_2, skin_like))
     return skin_lst
+
+
+def analysis_at_nova(response_str):
+    base_url = "https://minecraft.novaskin.me/skin/"
+    lst = list()
+    response_str = response_str.replace("searchData(", "")
+    response_str = response_str[:-1]
+    response_json = json.loads(response_str)
+    page = ""
+    try:
+        page = response_json["pagination"]["next"]
+        for skin in response_json['skins']:
+            author = skin['author']
+            name = skin['title']
+            download_url = base_url + str(skin['id']) + '/download'
+            preview_url_1 = skin['screenshot']
+            like = str(skin['favorited'])
+            praise = str(skin['votes'])
+            lst.append((name, author, download_url, preview_url_1, like, praise))
+            print((name, author, download_url, preview_url_1, like, praise))
+    except KeyError as e:
+        print(e)
+    return page, lst
+

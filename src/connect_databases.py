@@ -138,7 +138,7 @@ def select_id_preview_url_1_need_be_modify(db):
     with db.cursor() as cursor:
         try:
             cursor.execute(
-                "SELECT `id` FROM `skin` WHERE `preview_url_1` LIKE 'https://r.nmc1.net%'")
+                "SELECT `id`,`preview_url_1` FROM `skin` WHERE `data_source` = 'mskin'")
             res = cursor.fetchall()
         except pymysql.Error as err:
             print(err)
@@ -167,6 +167,54 @@ def select_from_skin_where_data_source_is_mskin_order_by_download_desc_limit_500
         try:
             cursor.execute(
                 "select *from skin where data_source ='mskin' order by download desc limit 500")
+            res = cursor.fetchall()
+        except pymysql.Error as err:
+            print(err)
+            return None
+    return res
+
+
+def select_from_skin_where_data_source_is_nova_order_by_like_desc_limit_500(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute(
+                "select * from skin where data_source ='nova skin' order by `like` desc limit 500")
+            res = cursor.fetchall()
+        except pymysql.Error as err:
+            print(err)
+            return None
+    return res
+
+
+def select_from_skin_where_data_source_is_mc_skin_net(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute(
+                "select * from skin where data_source ='MCskin_net'")
+            res = cursor.fetchall()
+        except pymysql.Error as err:
+            print(err)
+            return None
+    return res
+
+
+def select_from_skin_where_data_source_is_mc_skin_com_order_by_download_desc_limit_500(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute(
+                "select * from skin where data_source ='MCskin_com' order by `download` desc limit 500")
+            res = cursor.fetchall()
+        except pymysql.Error as err:
+            print(err)
+            return None
+    return res
+
+
+def select_from_skin_where_data_source_is_name_mc_order_by_download_desc_limit_500(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute(
+                "select * from skin where data_source ='NameMC' order by `download` desc limit 500")
             res = cursor.fetchall()
         except pymysql.Error as err:
             print(err)

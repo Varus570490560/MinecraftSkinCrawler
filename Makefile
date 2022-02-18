@@ -8,3 +8,9 @@ reset_mskin_mark:
 	python ./src/main_reset_mskin.py
 craw_mskin:
 	python ./src/main_mskin.py
+craw_nova:
+	python ./src/main_nova.py
+download:
+	python ./src/main_downloader.py
+excel:
+	python ./src/make_excel.py

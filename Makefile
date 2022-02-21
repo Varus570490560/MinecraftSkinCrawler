@@ -14,3 +14,7 @@ download:
 	python ./src/main_downloader.py
 excel:
 	python ./src/make_excel.py
+init_mark_to_download:
+	python ./src/main_init_mark_to_download_png.py
+muti_thread_download:
+	python ./src/muti_thread_download.py

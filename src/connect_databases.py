@@ -154,7 +154,7 @@ def update_set_preview_url_1_by_id(db, id, url):
             print(err)
 
 
-def update_set_data_source(db,id,data_source):
+def update_set_data_source(db, id, data_source):
     with db.cursor() as cursor:
         try:
             cursor.execute('UPDATE `skin` SET `data_source` = %s WHERE `id` = %s', (data_source, id))
@@ -233,3 +233,44 @@ def select_from_skin(db):
             return None
     return res
 
+
+def init_mark_to_download(mark):
+    db = open_database_mc_skin()
+    skins = select_from_skin(db=db)
+    with mark.cursor() as cursor:
+        try:
+            cursor.execute('DELETE FROM `mskin_mark`')
+            for skin in skins:
+                cursor.execute('INSERT INTO `mskin_mark` (`page`,`mark`) VALUES (%s,0)', (skin[0],))
+        except pymysql.Error as err:
+            print(err)
+    close_database(db=db)
+
+
+def update_skin_set_is_download_is_1(db, skin_id):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute('UPDATE `skin` SET `is_download` = 1 WHERE `id` = %s', (skin_id,))
+        except pymysql.Error as err:
+            print(err)
+
+
+def select_from_skin_where_is_download_is_0(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute(
+                "select * from skin where `is_download` = 0")
+            res = cursor.fetchall()
+        except pymysql.Error as err:
+            print(err)
+            return None
+    return res
+
+
+def open_database_mc_skin_without_print():
+    try:
+        db = pymysql.connect(host='localhost', user='root', password='', port=3306, database='mc_skin', autocommit=True)
+    except pymysql.Error as e:
+        print(e)
+        return None
+    return db

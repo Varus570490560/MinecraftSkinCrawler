@@ -14,9 +14,22 @@ def slip(page, group_count):
     while i < group_count:
         res_lst.append(list())
         i = i + 1
-    i = 1
+    i = 0
     while i < len(page):
         res_lst[i % group_count].append(page[i][0])
+        i = i + 1
+    return res_lst
+
+
+def slip_all(page, group_count):
+    i = 0
+    res_lst = list()
+    while i < group_count:
+        res_lst.append(list())
+        i = i + 1
+    i = 0
+    while i < len(page):
+        res_lst[i % group_count].append(page[i])
         i = i + 1
     return res_lst
 
@@ -56,6 +69,7 @@ def craw_at_mskin(thread_count):
     for page in slip_page:
         i = i + 1
         CrawlingMskinThread(i, page).start()
+    connect_databases.close_database(db)
 
 
 def craw_at_name_mc_unit(pages):
@@ -89,4 +103,48 @@ def craw_at_name_mc(thread_count):
     CrawlingNameMC(i, page).start()
 
 
+class DownloadThread(threading.Thread):
+    def __init__(self, thread_id, pages):
+        threading.Thread.__init__(self)
+        self.thread_id = thread_id
+        self.pages = pages
 
+    def run(self):
+        print("开始线程：" + str(self.thread_id))
+        download_unit(pages=self.pages)
+        print("退出线程：" + str(self.thread_id))
+
+
+def download_unit(pages):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36 '
+    }
+    skins = pages
+    for skin in skins:
+        download_response = requests.get(url=skin[3], headers=headers)
+        with open('../../downloadPNG/' + str(skin[0]) + 'download' + '.png', 'wb') as f:
+            f.write(download_response.content)
+        print('id= ' + str(skin[0]), 'download file', ' Saved !!!')
+        preview1_response = requests.get(url=skin[4], headers=headers)
+        with open('../../preview1PNG/' + str(skin[0]) + 'preview1' + '.png', 'wb') as f:
+            f.write(preview1_response.content)
+        print('id= ' + str(skin[0]), 'preview1 file', ' Saved !!!')
+        if skin[5] is not None:
+            preview2_response = requests.get(url=skin[5], headers=headers)
+            with open('../../preview2PNG/' + str(skin[0]) + 'preview2' + '.png', 'wb') as f:
+                f.write(preview2_response.content)
+            print('id= ' + str(skin[0]), 'preview2 file', ' Saved !!!')
+        db = connect_databases.open_database_mc_skin_without_print()
+        connect_databases.update_skin_set_is_download_is_1(db=db, skin_id=skin[0])
+        connect_databases.close_database(db)
+
+
+def download(thread_count):
+    db = connect_databases.open_database_mc_skin()
+    skins = connect_databases.select_from_skin_where_is_download_is_0(db=db)
+    pages = slip_all(skins, thread_count)
+    i = 0
+    for page in pages:
+        i = i + 1
+        DownloadThread(i, page).start()
+    connect_databases.close_database(db)

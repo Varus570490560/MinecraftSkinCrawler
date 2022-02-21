@@ -221,3 +221,15 @@ def select_from_skin_where_data_source_is_name_mc_order_by_download_desc_limit_5
             return None
     return res
 
+
+def select_from_skin(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute(
+                "select * from skin")
+            res = cursor.fetchall()
+        except pymysql.Error as err:
+            print(err)
+            return None
+    return res
+

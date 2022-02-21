@@ -4,7 +4,7 @@ import connect_databases
 
 if __name__ == '__main__':
     db = connect_databases.open_database_mc_skin()
-    skins = connect_databases.select_from_skin_where_data_source_is_name_mc_order_by_download_desc_limit_500(db)
+    skins = connect_databases.select_from_skin(db=db)
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36 '
     }

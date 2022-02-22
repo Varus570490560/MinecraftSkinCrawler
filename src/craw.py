@@ -56,9 +56,23 @@ def craw_at_mc_skin_top():
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36 '
     }
+    page = 217
+    while page <= 240:
+        print('page = ', page, '/240')
+        response = requests.get(url='https://mcskins.top/page/' + str(page), headers=headers)
+        lst = analy.analysis_mc_skin_top_page(response=response)
+        connect_databases.insert_into_mc_skin_from_mcskin_top(db=db, skin_lst=lst)
+        page = page + 1
+    connect_databases.close_database(db=db)
+
+
+def craw_at_needcoolshoes():
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36 '
+    }
+    base_url = 'https://www.needcoolshoes.com/gallery?page='
     page = 1
-    response = requests.get(url='https://mcskins.top/page/'+ str(page), headers=headers)
-    lst = analy.analysis_mc_skin_top_page(response=response)
-    print(lst)
-
-
+    while page < 57998:
+        print('page=', page)
+        response = requests.get(base_url + str(page), headers=headers)
+        analy.analysis_needcoolshoes(response=response)

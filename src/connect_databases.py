@@ -274,3 +274,42 @@ def open_database_mc_skin_without_print():
         print(e)
         return None
     return db
+
+
+def insert_into_mc_skin_from_mcskin_top(db, skin_lst):
+    with db.cursor() as cursor:
+        for skin in skin_lst:
+            try:
+                print(skin)
+                cursor.execute(
+                    'INSERT INTO `skin` (`name`,`author`,`download_url`,`preview_url_1`,`like`,`comment`,`data_source`) VALUES (%s,%s,%s,%s,%s,%s,"mcskin_top")',
+                    skin)
+                print('database saved!')
+            except pymysql.Error as err:
+                print(err)
+
+
+def insert_into_mc_skin_from_needcoolshoes(db, skin):
+    skin_id = ""
+    with db.cursor() as cursor:
+        try:
+            print(skin)
+            cursor.execute(
+                'INSERT INTO `skin` (`name`,`author`,`download_url`,`preview_url_1`,`data_source`) VALUES (%s,%s,%s,%s,"needcoolshoes")',
+                skin)
+            print('database saved!')
+            cursor.execute(
+                'SELECT `id` FROM `skin` WHERE `download_url`= %s', (skin[3],))
+            res = cursor.fetchall()
+            skin_id = res[0][0]
+        except pymysql.Error as err:
+            print(err)
+    return skin_id
+
+
+def update_mc_skin_reset_needcoolshoes_download_url(db, skin_id, position):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute('UPDATE `skin` SET `download_url` = %s WHERE `id` = %s', (position, skin_id))
+        except pymysql.Error as err:
+            print(err)

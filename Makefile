@@ -18,3 +18,5 @@ init_mark_to_download:
 	python ./src/main_init_mark_to_download_png.py
 muti_thread_download:
 	python ./src/muti_thread_download.py
+craw_mcskin_top:
+	python ./src/main_mc_skin_top.py

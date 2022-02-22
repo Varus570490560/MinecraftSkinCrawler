@@ -96,6 +96,18 @@ class CrawlingNameMC(threading.Thread):
         print("退出线程：" + str(self.thread_id))
 
 
+class CrawlingNeedcoolshoes(threading.Thread):
+    def __init__(self, thread_id, pages):
+        threading.Thread.__init__(self)
+        self.thread_id = thread_id
+        self.pages = pages
+
+    def run(self):
+        print("开始线程：" + str(self.thread_id))
+        craw_at_needcoolshoes_unit(pages=self.pages)
+        print("退出线程：" + str(self.thread_id))
+
+
 def craw_at_name_mc(thread_count):
     page = list()
     page.append(101)
@@ -148,3 +160,17 @@ def download(thread_count):
         i = i + 1
         DownloadThread(i, page).start()
     connect_databases.close_database(db)
+
+
+def craw_at_needcoolshoes_unit(pages):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36 '
+    }
+    base_url ='https://www.needcoolshoes.com/gallery?page='
+    for page in pages:
+        print('page=', page[0])
+        response=requests.get(base_url+str(page[0]))
+
+
+
+

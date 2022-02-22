@@ -1,7 +1,13 @@
 import json
+import os
+import shutil
+from time import sleep
 
 import requests
 from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import connect_databases
 
 
 def analysis_at_minecraft_skins_net(response):
@@ -179,32 +185,85 @@ def analysis_mc_skin_top_page(response):
         for i, child in enumerate(skin.descendants):
             if i == 2:
                 skin_url = base_url + child['href']
-                file_url = child['href'].replace('/skin/', '/')
+                file_url = child['href']
                 download_url = base_url + file_url
-                analysis_mc_skin_top_skin(skin_url)
+                like, comment, author = analysis_mc_skin_top_skin(skin_url)
             if i == 3:
                 name = child.string
             if i == 1:
-                preview_url_1 = base_url + '/assets/images/skin' + child['src'] + '.png'
+                preview_url_1 = base_url + child['src']
         lst.append((name, author, download_url, preview_url_1, like, comment))
         print((name, author, download_url, preview_url_1, like, comment))
     return lst
 
 
 def analysis_mc_skin_top_skin(skin_url):
+    global author_str
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36'
     }
     response = requests.get(url=skin_url, headers=headers)
     soup = BeautifulSoup(response.content, 'lxml')
-    like = soup.find(name='div', id='like')
-    comment = soup.find(name='commentsCount')
+    like = soup.find(name='div', id='likes')
+    comment = soup.find(name='span', attrs='commentsCount')
+    author = soup.find(name='span', attrs='pubmeta')
+    for i, child in enumerate(author.descendants):
+        if i == 5:
+            author_str = child
     if like is None:
         like = '0'
     else:
-        like=like.string
+        like = like.string
     if comment is None:
         comment = '0'
     else:
-        comment=comment.string
-    return like, comment
+        comment = comment.string
+    return like, comment, author_str
+
+
+def analysis_needcoolshoes(response):
+    soup = BeautifulSoup(response.content, 'lxml')
+    skins = soup.findAll(name='div', attrs='skin-item')
+    for skin in skins:
+        preview_url_1 = ""
+        name = ""
+        url = ""
+        author = ""
+        for i, child in enumerate(skin.descendants):
+            print(i, child)
+            if i == 5:
+                preview_url_1 = child['src']
+            if i == 3:
+                author = analysis_needcoolshoes_skin_get_author(child['href'])
+                url = child['href']
+            if i == 14:
+                name = child.string
+        db = connect_databases.open_database_mc_skin_without_print()
+        skin = (name, author, preview_url_1, preview_url_1)
+        skin_id = connect_databases.insert_into_mc_skin_from_needcoolshoes(db=db, skin=skin)
+        position = analysis_needcoolshoes_skin_to_download(url=url, skin_id=skin_id)
+        connect_databases.update_mc_skin_reset_needcoolshoes_download_url(db, skin_id, position)
+
+
+def analysis_needcoolshoes_skin_get_author(url):
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36 '
+    }
+    response = requests.get(url=url, headers=headers)
+    soup = BeautifulSoup(response.content, 'lxml')
+    author_info = soup.find(name='div', attrs='description checker-border')
+    for i, child in enumerate(author_info.descendants):
+        if i == 20:
+            return child.text
+
+
+def analysis_needcoolshoes_skin_to_download(url, skin_id):
+    browser = webdriver.Chrome()
+    browser.get(url=url)
+    download_button = browser.find_element(By.CLASS_NAME, 'download')
+    while not os.path.exists('/Users/rockey211224/needcoolshoes_download/' + str(skin_id) + 'download.png'):
+        sleep(3)
+        download_button.click()
+    shutil.move('/Users/rockey211224/Downloads/download.png',
+                '/Users/rockey211224/needcoolshoes_download/' + str(skin_id) + 'download.png')
+    return '/Users/rockey211224/needcoolshoes_download/' + str(skin_id) + 'download.png'

@@ -313,3 +313,15 @@ def update_mc_skin_reset_needcoolshoes_download_url(db, skin_id, position):
             cursor.execute('UPDATE `skin` SET `download_url` = %s WHERE `id` = %s', (position, skin_id))
         except pymysql.Error as err:
             print(err)
+
+
+def insert_into_mc_skin_from_blessing(db, skin_info):
+    with db.cursor() as cursor:
+        try:
+            print(skin_info)
+            cursor.execute(
+                'INSERT INTO `skin` (`name`,`author`,`download_url`,`preview_url_1`,`like`,`data_source`) VALUES (%s,%s,%s,%s,%s,"blessing")',
+                skin_info)
+            print('database saved!')
+        except pymysql.Error as err:
+            print(err)

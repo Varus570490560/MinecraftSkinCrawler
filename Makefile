@@ -20,3 +20,5 @@ muti_thread_download:
 	python ./src/muti_thread_download.py
 craw_mcskin_top:
 	python ./src/main_mc_skin_top.py
+craw_blessing:
+	python ./src/main_blessing.py

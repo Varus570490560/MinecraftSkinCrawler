@@ -170,6 +170,12 @@ def analysis_at_nova(response_str):
     return page, lst
 
 
+def get_name(url):
+    while url.find('/')!=-1:
+        url = url[url.find('/')+1:]
+    return url
+
+
 def analysis_mc_skin_top_page(response):
     lst = list()
     base_url = 'https://mcskins.top'
@@ -186,7 +192,8 @@ def analysis_mc_skin_top_page(response):
             if i == 2:
                 skin_url = base_url + child['href']
                 file_url = child['href']
-                download_url = base_url + file_url
+                file_url = get_name(file_url)
+                download_url = 'https://mcskins.top/assets/images/skin/'+file_url+'.png'
                 like, comment, author = analysis_mc_skin_top_skin(skin_url)
             if i == 3:
                 name = child.string

@@ -58,7 +58,7 @@ def craw_at_mc_skin_top():
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36 '
     }
-    page = 217
+    page = 0
     while page <= 240:
         print('page = ', page, '/240')
         response = requests.get(url='https://mcskins.top/page/' + str(page), headers=headers)
@@ -86,8 +86,8 @@ def craw_blessing():
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36 '
     }
     base_url = 'https://skin.prinzeugen.net/'
-    skin_num = 9
-    while skin_num < 100000:
+    skin_num = 37819
+    while skin_num < 90000:
         print('skin_num=' + str(skin_num))
         response = requests.get(base_url + '/skinlib/show/' + str(skin_num), headers=headers)
         if response.status_code != 200:
@@ -129,18 +129,16 @@ def craw_little():
             print('skin num ' + str(skin_num) + ' status code = ' + str(response.status_code))
             skin_num = skin_num + 1
             continue
-        soup = BeautifulSoup(response.content, 'lxml')
-        model = soup.find(name='span', id='model').string
-        if model != 'steve':
-            print('model=' + model)
+        skin_json = requests.get('https://littleskin.cn/texture/'+str(skin_num)+'?').json()
+        name = skin_json['name']
+        if skin_json['type'].string!='steve' and skin_json['type'].string!='alex':
+            print('skin_num ='+str(skin_num)+' type = '+skin_json['type'])
             skin_num = skin_num + 1
             continue
-        name = soup.find(name='span', id='name').string
-        like = soup.find(id='likes').string
-        info = soup.find(name='tbody')
         download_url = 'https://skin.prinzeugen.net/raw/' + str(skin_num) + '.png'
-        preview_url_1 = 'https://skin.prinzeugen.net/preview/' + str(skin_num) + '.png'
+        preview_url_1 = 'https://littleskin.cn/preview/''?height=150'
         author = ''
+        info = ''
         for i, child in enumerate(info.descendants):
             if i == 55:
                 author = child.text

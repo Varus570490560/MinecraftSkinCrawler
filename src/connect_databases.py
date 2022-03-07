@@ -282,7 +282,7 @@ def insert_into_mc_skin_from_mcskin_top(db, skin_lst):
             try:
                 print(skin)
                 cursor.execute(
-                    'INSERT INTO `skin` (`name`,`author`,`download_url`,`preview_url_1`,`like`,`comment`,`data_source`) VALUES (%s,%s,%s,%s,%s,%s,"mcskin_top")',
+                    'INSERT INTO `skin` (`name`,`author`,`skin_image_url`,`preview_image_url`,`like`,`comment`,`data_source`) VALUES (%s,%s,%s,%s,%s,%s,"mcskin_top")',
                     skin)
                 print('database saved!')
             except pymysql.Error as err:
@@ -325,3 +325,47 @@ def insert_into_mc_skin_from_blessing(db, skin_info):
             print('database saved!')
         except pymysql.Error as err:
             print(err)
+
+
+def update_skin_set_download_url_by_id(db, skin_id, url):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute('UPDATE `skin` SET `download_url` = %s WHERE `id` = %s', (url, skin_id))
+        except pymysql.Error as err:
+            print(err)
+
+
+def update_skin_set_preview_url_1_by_id(db, skin_id, url):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute('UPDATE `skin` SET `preview_url_1` = %s WHERE `id` = %s', (url, skin_id))
+        except pymysql.Error as err:
+            print(err)
+
+
+def update_skin_set_preview_url_2_by_id(db, skin_id, url):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute('UPDATE `skin` SET `preview_url_2` = %s WHERE `id` = %s', (url, skin_id))
+        except pymysql.Error as err:
+            print(err)
+
+
+def update_skin_set_size_by_id(db, skin_id, size):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute('UPDATE `skin` SET `size` = %s WHERE `id` = %s', (size, skin_id))
+            print((size, skin_id))
+        except pymysql.Error as err:
+            print(err)
+
+
+def select_from_skin_where_data_source_is_mc_skin_com_order_by_download_desc_limit_2000_remove_duplicate_by_sha256(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute("SELECT * FROM `skin` WHERE `id` IN (SELECT min(`id`) FROM `skin`WHERE `id` <138751 GROUP BY `sha256`) AND `data_source` = 'MCskin_com' AND `size` = '(64, 64)' ORDER BY `download` DESC LIMIT 2000")
+            res = cursor.fetchall()
+        except pymysql.Error as err:
+            print(err)
+            return None
+    return res

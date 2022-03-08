@@ -13,6 +13,18 @@ def open_database_mc_skin():
     return db
 
 
+def open_database_online_skin():
+    try:
+        db = pymysql.connect(host='localhost', user='root', password='', port=3306, database='online_skin',
+                             autocommit=True)
+        print('database "online_skin" open successfully!!!')
+    except pymysql.Error as e:
+        print('database "online_skin" open failed!!!')
+        print(e)
+        return None
+    return db
+
+
 def close_database(db):
     db.close()
 
@@ -363,9 +375,151 @@ def update_skin_set_size_by_id(db, skin_id, size):
 def select_from_skin_where_data_source_is_mc_skin_com_order_by_download_desc_limit_2000_remove_duplicate_by_sha256(db):
     with db.cursor() as cursor:
         try:
-            cursor.execute("SELECT * FROM `skin` WHERE `id` IN (SELECT min(`id`) FROM `skin`WHERE `id` <138751 GROUP BY `sha256`) AND `data_source` = 'MCskin_com' AND `size` = '(64, 64)' ORDER BY `download` DESC LIMIT 2000")
+            cursor.execute(
+                "SELECT * FROM `skin` WHERE `id` IN (SELECT min(`id`) FROM `skin`WHERE `id` <138751 GROUP BY `sha256`) AND `data_source` = 'MCskin_com' AND `size` = '(64, 64)' ORDER BY `download` DESC LIMIT 2000")
             res = cursor.fetchall()
         except pymysql.Error as err:
             print(err)
             return None
     return res
+
+
+def select_from_skin_where_data_source_is_mc_skin_com_order_by_download_desc_limit_2000_remove_duplicate_by_sha256(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute(
+                "SELECT * FROM `skin` WHERE `id` IN (SELECT min(`id`) FROM `skin`WHERE `id` <138751 GROUP BY `sha256`) AND `data_source` = 'MCskin_com' AND `size` = '(64, 64)' ORDER BY `download` DESC LIMIT 2000")
+            res = cursor.fetchall()
+        except pymysql.Error as err:
+            print(err)
+            return None
+    return res
+
+
+def select_from_skin_where_data_source_is_mc_net_order_by_download_desc_limit_2000_remove_duplicate_by_sha256(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute(
+                "SELECT * FROM `skin` WHERE `id` IN (SELECT min(`id`) FROM `skin`WHERE `id` <138751 GROUP BY `sha256`) AND `data_source` = 'MCskin_net' AND `size` = '(64, 64)' ORDER BY `download` DESC LIMIT 2000")
+            res = cursor.fetchall()
+        except pymysql.Error as err:
+            print(err)
+            return None
+    return res
+
+
+def select_from_skin_where_data_source_is_nova_order_by_download_desc_limit_2000_remove_duplicate_by_sha256(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute(
+                "SELECT * FROM `skin` WHERE `id` IN (SELECT min(`id`) FROM `skin`WHERE `id` <138751 GROUP BY `sha256`) AND `data_source` = 'nova skin' AND `size` = '(64, 64)' ORDER BY `download` DESC LIMIT 2000")
+            res = cursor.fetchall()
+        except pymysql.Error as err:
+            print(err)
+            return None
+    return res
+
+
+def select_from_skin_where_data_source_is_mskin_order_by_download_desc_limit_2000_remove_duplicate_by_sha256(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute(
+                "SELECT * FROM `skin` WHERE `id` IN (SELECT min(`id`) FROM `skin`WHERE `id` <138751 GROUP BY `sha256`) AND `data_source` = 'mskin' AND `size` = '(64, 64)' ORDER BY `download` DESC LIMIT 2000")
+            res = cursor.fetchall()
+        except pymysql.Error as err:
+            print(err)
+            return None
+    return res
+
+
+def select_from_skin_where_data_source_is_name_mc_order_by_download_desc_limit_2000_remove_duplicate_by_sha256(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute(
+                "SELECT * FROM `skin` WHERE `id` IN (SELECT min(`id`) FROM `skin`WHERE `id` <138751 GROUP BY `sha256`) AND `data_source` = 'NameMC' AND `size` = '(64, 64)' ORDER BY `download` DESC LIMIT 2000")
+            res = cursor.fetchall()
+        except pymysql.Error as err:
+            print(err)
+            return None
+    return res
+
+
+def select_from_skin_remove_duplicate(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute(
+                "SELECT * FROM `skin` WHERE `id` IN (SELECT min(`id`) FROM `skin`WHERE `id` <138751 GROUP BY `sha256`) AND `data_source` = 'NameMC' AND `size` = '(64, 64)' ORDER BY `download` DESC LIMIT 2000")
+            res = cursor.fetchall()
+        except pymysql.Error as err:
+            print(err)
+            return None
+    return res
+
+
+def select_id_from_mc_skin(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute("SELECT `id` from mc_skin")
+            res = cursor.fetchall()
+        except pymysql.Error as err:
+            print(err)
+            return None
+    return res
+
+
+def update_set_in_use_by_id(db, ids):
+    with db.cursor() as cursor:
+        for id in ids:
+            try:
+                cursor.execute("UPDATE skin set `in_use` = 1 where id = %s", id[0])
+            except pymysql.Error as err:
+                print(err)
+
+
+def select_download_image_url_from_mc_skin(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute("SELECT `skin_image_url` from mc_skin")
+            res = cursor.fetchall()
+        except pymysql.Error as err:
+            print(err)
+            return None
+    print(res)
+    return res
+
+
+def select_sha256_from_skin_by_download_image_url(db, download_image_urls):
+    lst = list()
+    with db.cursor() as cursor:
+        for download_image_url in download_image_urls:
+            try:
+                cursor.execute("SELECT `sha256` FROM `skin` where `skin_image_url` = %s", (download_image_url[0],))
+                res = cursor.fetchall()
+                lst.append(res[0][0])
+            except pymysql.Error as e:
+                print(e)
+    print(lst)
+    return lst
+
+
+def update_set_in_use_by_sha256(db, sha256s):
+    with db.cursor() as cursor:
+        for sha256 in sha256s:
+            try:
+                cursor.execute("UPDATE skin set `in_use` = 1 where `sha256` = %s", sha256)
+                print(sha256)
+            except pymysql.Error as err:
+                print(err)
+
+
+def select_from_skin_where_in_use_is_0_single(db):
+    with db.cursor() as cursor:
+        try:
+            cursor.execute('SELECT * FROM `skin` WHERE `id` IN (SELECT min(`id`) FROM `skin`WHERE `id` <138751 GROUP BY `sha256`)  AND `size` = "(64, 64)"')
+            res = cursor.fetchall()
+        except pymysql.Error as err:
+            print(err)
+        return res
+
+
+
